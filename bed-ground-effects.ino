@@ -1,7 +1,7 @@
 #include "FastLED.h"
 
 #define NUM_LEDS 90
-#define DATA_PIN 6
+#define DATA_PIN 7
 #define POWER_PIN 10
 
 #define BUTTON_PIN 9
@@ -223,7 +223,7 @@ void WrapSlider( CRGB backColor, CRGB slideColor, int width, int wait) {
 static void showSleepCatch( int wait) {
   bool newState = digitalRead(BUTTON_PIN);
   // Check to see if it's time to sleep
-  if (millis() > interact_time + SLEEP_MILLIS * (analogRead(A0) + 1) / 1024) {
+  if (millis() > interact_time + SLEEP_MILLIS) {
     digitalWrite( POWER_PIN, HIGH);
   }
   // Check if state changed from high to low (button press).
