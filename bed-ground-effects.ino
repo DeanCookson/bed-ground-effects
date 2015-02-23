@@ -5,11 +5,12 @@
 #define POWER_PIN 10
 
 #define BUTTON_PIN 9
-#define MODES 8
+#define MODES 9
 #define SLEEP_MINUTES 15
 #define SLEEP_MILLIS SLEEP_MINUTES * 60000
 
 CRGB leds[NUM_LEDS];
+const CRGB ROYGBV[7] = { CRGB::Red, CRGB::Orange, CRGB::Yellow, CRGB::Green, CRGB::Blue, CRGB::Indigo, CRGB::Violet };
 
 volatile int mode = 0;
 volatile bool interrupted = false;
@@ -57,7 +58,11 @@ void loop() {
     case 7:
       WrapSlider(CRGB::DarkBlue, CRGB::Yellow, 5, 25);
       break;
+    case 8:
+      PulseRainbow( 5);
+      break;
   }
+  interrupted = false;
   //  for(int j = 255; j >= 0; j--) {
   //    for(int i = 0; i < NUM_LEDS; i++) {
   //      leds[i] = CHSV( Wheel(255 * (i+0) / NUM_LEDS), 255, j);
@@ -81,13 +86,13 @@ unsigned int Wheel(unsigned int WheelPos) {
 }
 
 void RainbowChase(int wait) {
-//  for (int j = NUM_LEDS; j >= 0; j--) {
-//    for (int i = 0; i < NUM_LEDS; i++) {
-//      leds[i] = CHSV( Wheel(255 * (i + j) / NUM_LEDS), 255, 255);
-//    }
+  //  for (int j = NUM_LEDS; j >= 0; j--) {
+  //    for (int i = 0; i < NUM_LEDS; i++) {
+  //      leds[i] = CHSV( Wheel(255 * (i + j) / NUM_LEDS), 255, 255);
+  //    }
   for (unsigned int j = 0; j <= NUM_LEDS; j++) {
     for (unsigned int i = 0; i < NUM_LEDS; i++) {
-      leds[i] = CHSV( Wheel((i+j)*256/NUM_LEDS), 255, 255);
+      leds[i] = CHSV( Wheel((i + j) * 256 / NUM_LEDS), 255, 255);
     }
     /*FastLED.show();
     if ( interrupted) {
@@ -142,7 +147,6 @@ void PulseColor(CRGB color, int wait) {
     FastLED.setBrightness(j);
     showSleepCatch(wait);
     if ( interrupted) {
-      interrupted = false;
       interact_time = millis();
       return;
     }
@@ -151,7 +155,6 @@ void PulseColor(CRGB color, int wait) {
     FastLED.setBrightness(j);
     showSleepCatch(wait);
     if ( interrupted) {
-      interrupted = false;
       interact_time = millis();
       return;
     }
@@ -216,6 +219,17 @@ void WrapSlider( CRGB backColor, CRGB slideColor, int width, int wait) {
       } else {
         leds[i + j - NUM_LEDS] = backColor;
       }
+    }
+  }
+}
+
+void PulseRainbow(int wait) {
+  for (int color = 0; color < 7; color++) {
+    PulseColor(ROYGBV[color], wait);
+
+    if ( interrupted) {
+      interact_time = millis();
+      return;
     }
   }
 }
